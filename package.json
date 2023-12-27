@@ -1,6 +1,6 @@
 {
-  "name": "veil",
-  "version": "0.1.1",
+  "name": "envelope-822",
+  "version": "1.0.0",
   "contributors": [
     {
       "name": "Joshua Davis",
@@ -19,17 +19,17 @@
     "parse",
     "json"
   ],
-  "homepage": "https://github.com/byjoshuadavis/veil",
+  "homepage": "https://github.com/byjoshuadavis/envelope-822",
   "repository": {
     "type": "git",
-    "url": "git://github.com/byjoshuadavis/veil"
+    "url": "git://github.com/byjoshuadavis/envelope-822"
   },
-  "engines": [
-    "node"
-  ],
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "devDependencies": {
     "prettier": "3.1.1",
     "tap": "~0.2.0"
   },
-  "main": "./veil.js"
+  "main": "./index.ts"
 }

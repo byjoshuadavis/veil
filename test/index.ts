@@ -1,6 +1,7 @@
-// The veil unit tests
+// The Envelope822 unit tests
 //
 // Copyright 2011 Iris Couch
+// Copyright 2023 Joshua Davis
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -14,40 +15,15 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-var tap = require('tap')
-  , test = tap.test
-  , util = require('util')
+import tap from 'tap'
+import envelope822 from '../index'
 
-var veil = require('../veil')
+const test = tap.test
 
-test('API', function(t) {
-  var veil
-
-  t.doesNotThrow(function() { veil = require('../veil') }, 'Require module')
-  t.type(veil, 'object', 'Veil module looks good')
-
-  t.type(veil.parse, 'function', '.parse()')
-  t.type(veil.defaults, 'function', 'Defaultable API')
-
-  t.throws(function() { veil.parse() }, 'Throw for no parameters')
-  t.throws(function() { veil.parse(null) }, 'Throw for null parameter')
-  t.throws(function() { veil.parse(123) }, 'Throw for number parameter')
-  t.throws(function() { veil.parse(/foo/) }, 'Throw for regex parameter')
-  t.throws(function() { veil.parse(['list']) }, 'Throw for array parameter')
-  t.throws(function() { veil.parse({x:'hi'}) }, 'Throw for object parameter')
-
-  t.doesNotThrow(function() { veil.parse("") }, 'No throw for string parameter')
-  t.doesNotThrow(function() { veil.parse("", 1) }, 'No throw for numeric "options"')
-  t.doesNotThrow(function() { veil.parse("", {x:1}) }, 'No throw for object options')
-
-  t.end()
-})
 
 test('Basic parsing', function(t) {
-  var veil = require('../veil')
-
-  ; ['\n', '\r\n'].forEach(function(NL) {
-    var msg = veil.parse(message(NL))
+    ['\n', '\r\n'].forEach(function(NL) {
+    var msg = envelope822(message(NL))
 
     t.type(msg, 'object', 'Parsed message object')
 
@@ -69,10 +45,8 @@ test('Parsing options', function(t) {
   var msg
   function parse(defaults) {
     var label = JSON.stringify(defaults)
-      , veil = require('../veil').defaults(defaults)
-
     msg = null
-    t.doesNotThrow(function() { msg = veil.parse(message('\n')) }, 'Parse with defaults: ' + label)
+    t.doesNotThrow(function() { msg = envelope822(message('\n')) }, 'Parse with defaults: ' + label)
     t.ok(msg, 'Returned an object with defaults: ' + label)
   }
 

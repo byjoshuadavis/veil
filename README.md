@@ -1,43 +1,37 @@
-# Veil: Convert email or HTTP messages to Javascript objects
+# Envelope822: Convert email or HTTP messages to Javascript objects
 
-Veil turns this
+Envelope822 turns this
 
-    Subject: Hello, Veil!
-    Date: Tue Jan 17 2012 09:06:59 GMT+0700 (ICT)
-    From: jhs@iriscouch.com
+    Subject: Hello, Envelope822!
+    Date: Wed Dec 27 2024 09:06:59 GMT+0700 (ICT)
+    From: jhs@example.com
 
-    Hello, Veil. Welcome to the party.
+    Hello, Envelope822. Welcome to the party.
 
 into this.
 
 ```javascript
-{ Date: Tue, 17 Jan 2012 02:06:59 GMT,
-  From: 'jhs@iriscouch.com',
-  Subject: 'Hello, Veil!',
-  body: 'Hello, Veil. Welcome to the party.' }
+{ Date: Wed, 27 Dec 2023 02:06:59 GMT,
+  From: 'jhs@example.com',
+  Subject: 'Hello, Envelope822!',
+  body: 'Hello, Envelope822. Welcome to the party.' }
 ```
 
-You can use it, for example, to edit [blog posts][blog] in a useful Markdown style but load them as Javascript objects.
+Envelope822 is available as an NPM module.
 
-Veil is available as an NPM module.
-
-    $ npm install veil
-
-Follow (upper-case *F*) comes from an internal Iris Couch project used in production for over a year. It works in the browser (beta) and is available as an NPM module.
-
-    $ npm install follow
+    $ npm install envelope822
 
 ## Example
 
-```javascript
-var veil = require('veil')
+```ts
+import envelope822 from 'envelope822';
 
 var message = 'Date: Tue, 17 Jan 2012 02:11:48 GMT\n'
             + 'Subject: This is the example\n'
             + '\n'
             + 'This is the body'
 
-message = veil.parse(message)
+message = envelope822.parse(message)
 console.dir(message)
 ```
 
@@ -47,40 +41,9 @@ Output:
       Subject: 'This is the example'
       body: 'This is the body' }
 
-## Options
-
-Veil is [defaultable][defaultable]. Customize its major behaviors by setting its default options:
-
-```javascript
-// Stock behavior
-var veil = require('veil')
-
-// Modified behavior, with inheritance.
-var better_veil = veil.defaults({ keys: 'underscore' })
-  , best_veil = better_veil.defaults({ dates: true
-                                     , numbers: true
-                                     })
-```
-
-<a name="api"></a>
-## API Overview
-
-Veil has one function:
-
-`parse(message, [options])` | Return an object representing the message, with optional extra options.
-
-<a name="options"></a>
-## Options
-
-The options to *parse()* are the same as those for `.defaults()`.
-
-* `keys` | If this is `"underscore"`, convert keys like `"Content-Type"` to `"content_type"`
-* `dates` | Enable this to convert timestamp values into `Date` objects
-* `numbers` | Enable this to convert numeric values to `Number`s
-
 ## Tests
 
-Veil uses [node-tap][tap]. If you clone this Git repository, tap is included.
+Envelope822 uses [node-tap][tap]. If you clone this Git repository, tap is included.
 
     $ ./node_modules/.bin/tap test
     XXX
@@ -89,8 +52,4 @@ Veil uses [node-tap][tap]. If you clone this Git repository, tap is included.
 
 ## License
 
-Apache 2.0
-
-[tap]: https://github.com/isaacs/node-tap
-[blog]: https://github.com/jhs/jason.io/tree/master/posts/
-[defaultable]: https://github.com/iriscouch/defaultable
+Apache 2.0, originally forked from [Veil](https://github.com/iriscouch/veil)

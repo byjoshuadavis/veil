@@ -16,15 +16,15 @@
 //    limitations under the License.
 
 interface Options<> {
-  keys: null | "underscore";
-  dates: boolean;
-  numbers: boolean;
+  keys: null | "underscore"; // If this is "underscore", convert keys like "Content-Type" to "content_type"
+  dates: boolean; // Enable this to convert timestamp values into Date objects
+  numbers: boolean; // Enable this to convert numeric values to Numbers
   breaks: RegExp;
   newline: string;
   join: boolean;
-  body_key: string;
-  header_re: RegExp;
-  continued_header_re: RegExp;
+  bodyKey: string;
+  header: RegExp;
+  continuedHeader: RegExp;
 }
 
 interface Message {
@@ -38,47 +38,47 @@ const defaultOptions = {
   breaks: /\r?\n/,
   newline: "\n",
   join: true,
-  body_key: "body",
-  header_re: /^(.*?): +(.*)$/,
-  continued_header_re: /^(\s.+)$/,
+  bodyKey: "body",
+  header: /^(.*?): +(.*)$/,
+  continuedHeader: /^(\s.+)$/,
 } as Options;
 
 function parse(message: string, options: Options) {
   var result = message.split(options.breaks).reduce((message, msgLine) => {
     return line(message, msgLine, options);
   }, {} as Message);
-  const body = result[options.body_key]
+  const body = result[options.bodyKey]
   if (options.join && Array.isArray(body)) {
-    result[options.body_key] = body.join(options.newline);
+    result[options.bodyKey] = body.join(options.newline);
   }
 
   return result;
 }
 
 function line(message: Message, line: string, options: Options) {
-  if (options.body_key in message) body(message, line, options);
-  else if (line.length === 0) message[options.body_key] = [];
+  if (options.bodyKey in message) body(message, line, options);
+  else if (line.length === 0) message[options.bodyKey] = [];
   else header(message, line, options);
 
   return message;
 }
 
 function body(message: Message, line: string, options: Options) {
-  if (Array.isArray(message[options.body_key])) {
-    (message[options.body_key] as string[]).push(line);
+  if (Array.isArray(message[options.bodyKey])) {
+    (message[options.bodyKey] as string[]).push(line);
   }
 }
 
 function header(message: Message, line: string, options: Options) {
-  var last_key = null as string | null;
-  var match = line.match(options.header_re),
+  var lastKey = null as string | null;
+  var match = line.match(options.header),
     key = match && match[1],
     val = match && match[2],
     append = false;
 
   if (typeof key !== "string" || typeof val !== "string") {
-    if (last_key && (match = line.match(options.continued_header_re))) {
-      key = last_key;
+    if (lastKey && (match = line.match(options.continuedHeader))) {
+      key = lastKey;
       val = match[1];
       append = true;
     } else throw new Error("Bad header line: " + JSON.stringify(line));
@@ -110,11 +110,11 @@ function header(message: Message, line: string, options: Options) {
     (message[key] as string) += new_val;
   } else if (key && new_val) {
     message[key] = new_val;
-    last_key = key;
+    lastKey = key;
   }
 }
 
-export default function veil(
+export default function envelope822(
   message: string,
   opts: Partial<Options> = defaultOptions,
 ): Message {
